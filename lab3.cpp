@@ -8,6 +8,7 @@
 #include "birthday.h"
 #include "treenode.h"
 #include "binarytree.h"
+#include "writer.h"
 
 using namespace std;
 
@@ -31,14 +32,12 @@ birthday birthdayParser(string aLine)
 	integer['8'] = 8;
 	integer['9'] = 9;
 
-	cout << "deciphering" << aLine << endl;
 	for (int i = 0; i < aLine.length(); i++)
 	{
 		char x = aLine.at(i);
 	//	cout << "at"<< i << "x is:" << x << endl;
 		if (isdigit(x))
 		{
-			cout << "attempting to add" << x << endl;
 			arr[n] = integer.find(x)->second;
 			n++;
 		}
@@ -60,9 +59,9 @@ birthday birthdayParser(string aLine)
 //					cout <<"birthday date "<< days << endl;
 //					cout << "phrase.at(0)" << phrase.at(0) << endl;
 					someOne.addName(phrase.at(0));
-					cout << "Name:" << someOne.getName() <<endl;
+//					cout << "Name:" << someOne.getName() <<endl;
 					someOne.addMonth(phrase.at(1));
-					cout << "Month" << someOne.getMonth() <<endl;
+//					cout << "Month" << someOne.getMonth() <<endl;
 					someOne.addDay(days);
 					break;
 				default:
@@ -77,17 +76,26 @@ int main()
 {
 	reader magic;
 	vector<string> readIn;
-	birthday temp;
-	binarytree <birthday> testTree;
+//	birthday temp;
+	binarytree <string> testTree;
 	magic.addFile("Birthdays.txt");
 	magic.readFile();
 	readIn = magic.getData();
 	magic.closeFile();
 
-	cout << "Lines read in:" << readIn.size() << endl;
+	//cout << "Lines read in:" << readIn.size() << endl;
 	for (int i = 0; i < readIn.size(); i++)
 	{
-		temp = birthdayParser(readIn.at(i));
-		cout << "Name after: " << temp.getName() << endl;
+//		temp = birthdayParser(readIn.at(i));
+//		cout << "Name after: " << temp.getName();
+		testTree.add(readIn.at(i));
+		cout << " height is: " << testTree.getHeight() << endl;
 	}
+
+	writer end;
+
+	end.addFile("testWrite.txt");
+	end.addData(readIn);
+	end.writeFile();
+	end.closeFile();
 }

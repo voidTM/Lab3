@@ -12,31 +12,28 @@ using namespace std;
 template<class Type>
 class treenode
 {
-	private:
-		Type data;
-		treenode<Type> *rChildPtr;
-		treenode<Type> *lChildPtr;
-	public:
-		//Constructor
-		treenode();
-		treenode(const Type item);
-		treenode(const Type item, treenode<Type> *leftPtr, treenode<Type> *rightPtr);
-
-		//Destructor
-
-		//Method
-		void setItem(const Type anItem);
-		Type getItem() const;
-
-		bool isLeaf() const;
-
-		treenode<Type> *getLeftPtr() const;
-		treenode<Type> *getRightPtr() const;
-
-		void setLeftChildPtr(treenode<Type> *leftPtr);
-		void setRightChildPtr(treenode<Type> *rightPtr);
+private:
+	Type data;
+	int height;
+	int lHeight;
+	int rHeight;
+	treenode<Type> *rChildPtr;
+	treenode<Type> *lChildPtr;
+public:
+	//Constructor
+	treenode();
+	treenode(const Type item);
+	treenode(const Type item, treenode<Type> *leftPtr, treenode<Type> *rightPtr);
+	//Destructor
+	//Method
+	void setItem(const Type anItem);
+	Type getItem() const;
+	bool isLeaf() const;
+	treenode<Type> *getLeftPtr();
+	treenode<Type> *getRightPtr();
+	void setLeftChildPtr(treenode<Type> *leftPtr);
+	void setRightChildPtr(treenode<Type> *rightPtr);
 };
-
 /*
 treenode()
 Precondition: N/A
@@ -48,7 +45,6 @@ treenode<Type>::treenode()
 	rChildPtr = NULL;
 	lChildPtr = NULL;
 }
-
 /*
 treenode(Type item)
 Precondition: N/A
@@ -61,7 +57,6 @@ treenode<Type>::treenode(Type item)
 	rChildPtr = NULL;
 	lChildPtr = NULL;
 }
-
 /*
 treenode(Type item, treenode<Type> *leftPtr, treenode<Type> *rightPtr)
 Precondition: N/A
@@ -74,7 +69,6 @@ treenode<Type>::treenode(Type item, treenode<Type> *leftPtr, treenode<Type> *rig
 	rChildPtr = leftPtr;
 	lChildPtr = rightPtr;
 }
-
 /*
 void setItem(Type anItem)
 Precondition: anItem should be of valid data type.
@@ -85,7 +79,6 @@ void treenode<Type>::setItem(Type anItem)
 {
 	data = anItem;
 }
-
 /*
 Type getItem()
 Precondition: data must already contain some value;
@@ -96,7 +89,6 @@ Type treenode<Type>::getItem() const
 {
 	return data;
 }
-
 /*
 bool isLeaf()
 Precondition: N/A
@@ -117,29 +109,26 @@ bool treenode<Type>::isLeaf() const
 		return false;
 	}
 }
-
 /*
 treenode<Type> *getLeftPtr()
 Preconditon: N/A
 Postcondition: returns the address to the left branch
 */
 template<class Type>
-treenode<Type> treenode<Type>:: *getLeftPtr()
+treenode<Type>* treenode<Type>:: getLeftPtr() 
 {
 	return lChildPtr;
 }
-
 /*
 treenode<Type> *getRightPtr()
 Preconditon: N/A
 Postcondition: returns the address to the right branch
 */
 template<class Type>
-treenode<Type> treenode<Type>:: *getRightPtr()
+treenode<Type>* treenode<Type>:: getRightPtr() 
 {
 	return rChildPtr;
 }
-
 /*
 void setLeftChildPtr
 Precondition: N/A
@@ -151,7 +140,6 @@ void treenode<Type>::setLeftChildPtr(treenode<Type> *leftPtr)
 {
 	lChildPtr = leftPtr;
 }
-
 /*
 void setLeftChildPtr
 Precondition: N/A
@@ -163,4 +151,5 @@ void treenode<Type>::setRightChildPtr(treenode<Type> *rightPtr)
 {
 	rChildPtr = rightPtr;
 }
+
 #endif

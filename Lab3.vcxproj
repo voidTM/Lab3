@@ -67,12 +67,14 @@
     <ClCompile Include="birthday.cpp" />
     <ClCompile Include="lab3.cpp" />
     <ClCompile Include="reader.cpp" />
+    <ClCompile Include="writer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="binarytree.h" />
     <ClInclude Include="birthday.h" />
     <ClInclude Include="reader.h" />
     <ClInclude Include="treenode.h" />
+    <ClInclude Include="writer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

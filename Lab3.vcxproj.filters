@@ -24,6 +24,9 @@
     <ClCompile Include="birthday.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="writer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="treenode.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="writer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

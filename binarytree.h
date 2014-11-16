@@ -25,13 +25,13 @@ protected:
 	// Protected Utility Methods Section:
 	// Recursive helper methods for the public methods.
 	//------------------------------------------------------------
-	int getHeightHelper(treenode < ItemType > *subTreePtr) const;
-	int getNumberOfNodesHelper(treenode < ItemType > *subTreePtr) const;
+	int getHeightHelper(treenode < ItemType > *subTreePtr) const;			//done
+	int getNumberOfNodesHelper(treenode < ItemType > *subTreePtr) const;	//done
 	// Recursively deletes all nodes from the tree.
-	void destroyTree(treenode < ItemType > *subTreePtr);
+	void destroyTree(treenode < ItemType > *subTreePtr);					
 	// Recursively adds a new node to the tree in a left/right fashion to
 	// keep the tree balanced.
-	treenode < ItemType > *balancedAdd(treenode < ItemType > *subTreePtr, treenode < ItemType > *newNodePtr);
+	treenode < ItemType > *balancedAdd(treenode < ItemType > *subTreePtr, treenode < ItemType > *newNodePtr);	//done
 	// Removes the target value from the tree by calling moveValuesUpTree
 	// to overwrite value with value from child.
 	treenode < ItemType > *removeValue(treenode < ItemType > *subTreePtr, const ItemType target, bool & success);
@@ -44,7 +44,7 @@ protected:
 	treenode < ItemType > *findNode(treenode < ItemType > *treePtr, const ItemType & target, bool & success) const;
 	// Copies the tree rooted at treePtr and returns a pointer to
 	// the copy.
-	treenode < ItemType > *copyTree(const treenode < ItemType > *treePtr) const;
+	treenode < ItemType > *copyTree(const treenode < ItemType > *treePtr) const;	//done
 	// Recursive traversal helper methods:
 	void preorder(void visit(ItemType &), treenode < ItemType > *treePtr) const;
 	void inorder(void visit(ItemType &), treenode < ItemType > *treePtr) const;
@@ -348,20 +348,98 @@ treenode < ItemType >* binarytree<ItemType>::balancedAdd(treenode<ItemType> *sub
 	}
 }
 
+/*
+	
+*/
 template<class ItemType>
 treenode<ItemType>* binarytree<ItemType>::removeValue(treenode < ItemType > *subTreePtr, const ItemType target, bool & success)
 {
-	treenode<ItemType> *old 
-	delete subTreePtr;
+	subTreePtr = findNode(subTreePtr, target, success);
+	if (success == true)
+	{
+		subTreePtr = moveValuesUpTree(subTreePtr);
+		success = true;
+		return subTreePtr;
+	}
+	else
+	{
+		success = false;
+		return NULL;
+	}
 }
 
-
+/*
+	treenode<ItemType>* moveValuesUpTree(treenode<ItemType>* subTreePtr)
+*/
 template<class ItemType>
 treenode<ItemType>* binarytree<ItemType>::moveValuesUpTree(treenode<ItemType>* subTreePtr)
+{
+	treenode<ItemType>* left = subTreePtr->getLeftPtr();
+	treenode<ItemType>* right = subTreePtr->getRightPtr();
+	treenode<ItemType>* temp;
+
+	if (left == NULL && right == NULL)		//if leaf delete the leaf.
+	{
+		delete subTreePtr;
+		subTreePtr = NULL;
+		return subTreePtr;
+	}
+	else if (left != NULL && right != NULL)
+	{
+		if (left->getItem() > right->getItem)
+		{
+			temp = moveValuesUpTree(left);
+			return temp;
+		}
+		else
+		{
+			temp = moveValuesUpTree(right);
+			return temp;
+		}
+	}
+	else if (left == NULL || right == NULL)
+	{
+		if (left != NULL)
+		{
+
+		}
+	}
+}
+
+/*
+	treenode < ItemType > *findNode(treenode < ItemType > *treePtr, const ItemType & target, bool & success) const;
+	Precondition: N/A
+	Postcondition: Looks for the particular node and then returns the location of the node if found.
+*/
+template<class ItemType>
+treenode<ItemType>* binarytree<ItemType>::findNode(treenode<ItemType> *treePtr, const ItemType& target, bool& success) const
+{
+	if (treePtr == NULL)
+	{
+		success = false;
+		return NULL;
+	}
+	else if (treePtr->getItem() == target)		//the node matches that of 
+	{
+		success = true;
+		return treePtr;
+	}
+	else if (treePtr->getItem() > target)
+	{
+		treePtr = findNode(treePtr->getLeftChildPtr(), target, success);
+		return treePtr;
+	}
+	else if (tree->getItem() < target)
+	{
+		tempPtr = findNode(treePtr->getRightChildPtr(), target, success);
+		return treePtr;
+	}
+}
+
+template<class ItemType>
+void binarytree<ItemType>::postorder(void visit(ItemType &), treenode < ItemType > *treePtr) const
 {
 
 }
 
-
 #endif
-

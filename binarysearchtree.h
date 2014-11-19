@@ -8,16 +8,17 @@
 #include <map>
 #include <string>
 #include "treenode.h"
-#include "binarytree.hs"
+#include "binarytree.h"
 
 using namespace std;
 
 template<class ItemType>
-class binarysearchtree:public treenodeTree <ItemType>
+class binarysearchtree:public binarytree<ItemType>
 {
 private:
   treenode < ItemType > *rootPtr;
-  numberOfNodes = 0;
+  int numberOfNodes;
+  int height;
 protected:
 //------------------------------------------------------------
 // Protected Utility Methods Section:
@@ -25,7 +26,7 @@ protected:
 //------------------------------------------------------------
 // Recursively finds where the given node should be placed and
 // inserts it in a leaf at that point.
-  treenode < ItemType > *insertInorder (treenode < ItemType > *subTreePtr, treenode < ItemType > *newNode);
+  treenode < ItemType > *insertInorder (treenode < ItemType > *subTreePtr, treenode < ItemType > *newNode, int& height);
 // Removes the given target value from the tree while maintaining a
 // binary search tree.
   treenode < ItemType > *removeValue (treenode < ItemType > *subTreePtr, const ItemType target, bool & success);
@@ -37,7 +38,7 @@ protected:
 // pointed to by nodePtr.
 // Sets inorderSuccessor to the value in this node.
 // Returns a pointer to the revised subtree.
-  treenodes<ItemType> *removeLeftmostNode (treenode<ItemType> *subTreePtr, ItemType& inorderSuccessor);
+  treenode<ItemType>* removeLeftmostNode(treenode<ItemType>* subTreePtr, ItemType& inorderSuccessor);
 // Returns a pointer to the node containing the given value,
 // or nullptr if not found.
   treenode<ItemType> *findNode(treenode<ItemType> *treePtr, const ItemType &target) const;
@@ -50,7 +51,7 @@ public:
   binarysearchtree (const ItemType & rootItem);
   binarysearchtree (const binarysearchtree < ItemType > &tree);
 
-  virtual ~ binarysearchtree();
+//  virtual ~ binarysearchtree();
 //------------------------------------------------------------
 // Public Methods Section.
 //------------------------------------------------------------
@@ -60,9 +61,9 @@ public:
 
   int getNumberOfNodes () const;
 
-  ItemType getRootData () const throw (PrecondViolatedExcep);
+  ItemType getRootData () const;
 
-  void setRootData (const ItemType & newData) const throw (PrecondViolatedExcep);
+  void setRootData (const ItemType & newData) const;
 
   bool add (const ItemType & newEntry);
 
@@ -70,7 +71,7 @@ public:
 
   void clear ();
 
-  ItemType getEntry (const ItemType & anEntry) const throw (NotFoundException);
+  ItemType getEntry (const ItemType & anEntry) const;
 
   bool contains (const ItemType & anEntry) const;
 
@@ -86,7 +87,7 @@ public:
 //------------------------------------------------------------
 // Overloaded Operator Section.
 //------------------------------------------------------------
-  binarysearchtree < ItemType > &operator= (const binarysearchtree < ItemType > &rightHandSide);
+  binarysearchtree <ItemType> &operator= (const binarysearchtree < ItemType > &rightHandSide);
 };  // end binarysearchtree
 
 /*
@@ -95,11 +96,12 @@ public:
 	Postcondition: an empty binary search tree is initialized with
 	no nodes.
 */
-template<ItemType>
+template<class ItemType>
 binarysearchtree<ItemType>::binarysearchtree()
 {
 	numberOfNodes = 0;
 	rootPtr = NULL;
+	height = 0;
 }
 
 /*
@@ -107,11 +109,12 @@ binarysearchtree<ItemType>::binarysearchtree()
 	Precondition: N/A
 	Postcondition:Initializes a binarysearchtree with one node.
 */
-template<ItemType>
+template<class ItemType>
 binarysearchtree<ItemType>::binarysearchtree(const ItemType& rootItem)
 {
 	numberOfNodes = 1;
 	rootPtr = new treenode<ItemType>(rootItem, NULL, NULL);
+	height = 1;
 }
 
 /*
@@ -119,12 +122,14 @@ binarysearchtree<ItemType>::binarysearchtree(const ItemType& rootItem)
 	Precondition: N/A
 	Postcondition: copies a binarysearchtree over.
 */
-template<ItemType>
+template<class ItemType>
 binarysearchtree<ItemType>::binarysearchtree(const binarysearchtree<ItemType> &tree)
 {
 	numberOfNodes = 0;
+	height = 0;
 	rootPtr = copytree(tree.rootPtr);
 	numberOfNodes += tree.numberOfNodes;
+	height += tree.height;
 }
 
 /*
@@ -132,8 +137,8 @@ binarysearchtree<ItemType>::binarysearchtree(const binarysearchtree<ItemType> &t
 	Precondition: N/A
 	Postcondition: checks to see if there are any nodes if none return 0;
 */
-template<ItemType>
-bool binarysearchtree<ItemType>::isEmpty();
+template<class ItemType>
+bool binarysearchtree<ItemType>::isEmpty() const
 {
 	if(rootPtr != NULL)
 		return true;
@@ -142,16 +147,11 @@ bool binarysearchtree<ItemType>::isEmpty();
 }
 
 /*
-*/
-template<ItemType>
-int binarysearchtree<ItemType>::getHeight();
-
-/*
 	int getNumberOfNodes
 	Precondition: N/A
 	Postcondition: returns the number of nodes in the tree.
 */
-template<ItemType>
+template<class ItemType>
 int binarysearchtree<ItemType>::getNumberOfNodes() const
 {
 	return numberOfNodes;
@@ -161,7 +161,7 @@ int binarysearchtree<ItemType>::getNumberOfNodes() const
 	Precondition: the tree must not be empty
 	Postcondition: returns item stored at root.
 */
-template<ItemType>
+template<class ItemType>
 ItemType binarysearchtree<ItemType>::getRootData() const
 {
 	return rootPtr.getItem();
@@ -172,21 +172,31 @@ ItemType binarysearchtree<ItemType>::getRootData() const
 	Precondition: Data passed over needs to be same data type.
 	Postcondition: Data is set to the new data.
 */
-template<ItemType>
-void binarysearchtree<ItemType>::setRootData(const ItemType& newData)
+template<class ItemType>
+void binarysearchtree<ItemType>::setRootData(const ItemType& newData) const
 {
 	rootPtr.setItem(newData);
 }
 
 /*
-	
+	bool add(const ItemType& newData)
+	Precondition: N/A
+	Postcondition: Takes in the new entry and adds it to the binary search tree.
+	Also updates the height if the height of the new leaf is greater than that of
+	the previously recorded height.
 */
-template<ItemType>
+template<class ItemType>
 bool binarysearchtree<ItemType>:: add(const ItemType& newData)
 {
-	treenode<ItemType> temp = new treenode<ItemType>(newData, NULL, NULL);
-	insertInorder(rootPtr, temp);
-	numberofNodes++;
+	int tempHeight = 0;
+	cout << "Adding :   temporary Height is " << tempHeight <<endl;
+	cout << "height before search is" << height << endl;
+	treenode<ItemType>* temp = new treenode<ItemType>(newData, NULL, NULL);
+	cout << "Node to be added" << temp->getItem() << endl;
+	rootPtr = insertInorder(rootPtr, temp, tempHeight);
+	numberOfNodes += 1;
+	if (tempHeight > height)
+		height = tempHeight;
 	return true;
 }
 
@@ -195,8 +205,8 @@ bool binarysearchtree<ItemType>:: add(const ItemType& newData)
 	Precondition: N/A
 	Postcondition: removes node if found and returns true, false otherwise.
 */
-template<ItemType>
-bool binarysearchtree<ItemType>::remove(const ItemType& anEntry) const
+template<class ItemType>
+bool binarysearchtree<ItemType>::remove(const ItemType& anEntry)
 {
 	bool success
 	rootPtr = removeValue(rootPtr, anEntry, success);
@@ -204,21 +214,34 @@ bool binarysearchtree<ItemType>::remove(const ItemType& anEntry) const
 }
 
 /*
+	int getHeight() const
+*/
+template<class ItemType>
+int binarysearchtree<ItemType>::getHeight() const
+{
+	return height;
+}
+/*
 	void clear()
 	Precondition: N/A
 	Postcondition: All the nodes will be removed from the tree
 */
-template<ItemType>
+template<class ItemType>
 void binarysearchtree<ItemType>::clear()
 {
 	destroyTree();
 	numberOfNodes = 0;
 }
 
-template<ItemType>
-ItemType binarysearchtree<ItemType>::getEntry(const ItemType &anEntry)
+/*
+	ItemType getEntry
+	Precondition: N/A
+	Postcondition: 
+*/
+template<class ItemType>
+ItemType binarysearchtree<ItemType>::getEntry(const ItemType &anEntry) const
 {
-	
+	return anEntry;
 }
 
 /*
@@ -226,8 +249,8 @@ ItemType binarysearchtree<ItemType>::getEntry(const ItemType &anEntry)
 	Precondition: N/A
 	Postcondition: calls findNode. Returns false if null is given true otherwise
 */
-template<ItemType>
-bool binarysearchtree<ItemType>::contains(const ItemType &anEntry)
+template<class ItemType>
+bool binarysearchtree<ItemType>::contains(const ItemType &anEntry) const
 {
 	treeNode<ItemType>* returned;
 	returned = findNode(rootPtr, anEntry)
@@ -247,10 +270,13 @@ bool binarysearchtree<ItemType>::contains(const ItemType &anEntry)
 	treenode <ItemType> *insertInorder(treenode<ItemType>*subTreePtr, treenode<ItemType>*newNode);
 	Precondition:N/A
 	Postcondition: Finds where the node should be placed and then inserts it.
+	Also keeps track of the height of the leaf that is being added.
 */
-template<ItemType>
-treenode<ItemType>* binarysearchtree::insertInorder(treenode<ItemType>*subTreePtr,treenode<ItemType>*newNode)
+template<class ItemType>
+treenode<ItemType>* binarysearchtree<ItemType>::insertInorder(treenode<ItemType>*subTreePtr, treenode<ItemType>*newNode, int& traveled)
 {
+	traveled += 1;
+	cout << "now traveled " << traveled << endl;
 	treenode<ItemType>* temp;
 	if(subTreePtr == NULL)
 	{
@@ -258,12 +284,14 @@ treenode<ItemType>* binarysearchtree::insertInorder(treenode<ItemType>*subTreePt
 	}
 	else if(subTreePtr->getItem() > newNode->getItem())
 	{
-		temp = insertInorder(subTreePtr->getLeftChildPtr(), newNode);
+		cout << "current node " << subTreePtr->getItem() << endl;
+		temp = insertInorder(subTreePtr->getLeftPtr(), newNode, traveled);
 		subTreePtr->setLeftChildPtr(temp);
 	}
 	else
 	{
-		temp = insertInorder(subTreePtr->getRightChildPtr(), newNodePtr)
+		cout << "current node " << subTreePtr->getItem() << endl;
+		temp = insertInorder(subTreePtr->getRightPtr(), newNode, traveled);
 		subTreePtr->setRightChildPtr(temp);
 	}
 	return subTreePtr;
@@ -271,11 +299,12 @@ treenode<ItemType>* binarysearchtree::insertInorder(treenode<ItemType>*subTreePt
 
 /*
 	treenode < ItemType > *removeValue (treenode < ItemType > *subTreePtr, const ItemType target, bool & success);
-	Precondition: 
-	Postcondition:
+	Precondition: N/A
+	Postcondition: Searches for the value and then attempts to remove it.
+	Success = true if removed, false otherwise.
 */
-template<ItemType>
-treenode<ItemType>* binarysearchtree::removeValue(treenode<ItemType>* subTreePtr, treenode<ItemType>* newNode)
+template<class ItemType>
+treenode<ItemType>* binarysearchtree<ItemType>::removeValue(treenode<ItemType>* subTreePtr, ItemType target, bool & success)
 {
 	treenode<ItemType>* temp;
 	if(subtreePtr == NULL)
@@ -291,23 +320,28 @@ treenode<ItemType>* binarysearchtree::removeValue(treenode<ItemType>* subTreePtr
 	}
 	else if(subTreePtr->getItem() > target)
 	{
-		temp = removeValue(subTreePtr->getLeftChildPtr(), target, success);
+		temp = removeValue(subTreePtr->getLeftPtr(), target, success);
 		subTreePtr->setRightChildPtr(temp);
 		return subTreePtr;
 	}
 	else
 	{
-		temp = removeValue(subTreePtr->getRightChildPtr(), target, success)
+		temp = removeValue(subTreePtr->getRightPtr(), target, success)
 		subTreePtr->setRightChildPtr(tempPtr);
 		return subTreePtr;
 	}
 }
 
-template<ItemType>
-treenode<ItemType>* binarysearchtree::removeNode(treenode<ItemType>*nodePtr)
+/*
+	treendoe<ItemType>* removeNode(treenode<ItemType>*nodePtr)
+	Precondition: Node that is being removed should actually exist.
+	Postcondition: Removes the node and shifts the nodes below it up accordingly.
+*/
+template<class ItemType>
+treenode<ItemType>* binarysearchtree<ItemType>::removeNode(treenode<ItemType>*nodePtr)
 {
-	treenode<ItemType>* rightPtr = nodePtr->getRightChildPtr;
-	treenode<ItemType>* leftPtr = nodePtr->getLeftChildPtr;
+	treenode<ItemType>* rightPtr = nodePtr->getRightPtr;
+	treenode<ItemType>* leftPtr = nodePtr->getLeftPtr;
 	treenode<ItemType>* nodeToConnectPtr;
 	treenode<ItemType>* temp;
 	ItemType newValue;
@@ -341,20 +375,31 @@ treenode<ItemType>* binarysearchtree::removeNode(treenode<ItemType>*nodePtr)
 	}
 }
 
-template<ItemType>
-treenode<ItemType>* binarysearchtree::removeLeftmostNode(treenode<ItemType>*subTreePtr, ItemType& inorderSuccessor)
+/*
+	treenode<ItemType>* removeLeftmostNode(treenode<ItemType>*subTreePtr, ItemType& inorderSuccessor)
+	Precondition: Node must actually exist
+	Postcondition: Overrides the node with the 
+*/
+template<class ItemType>
+treenode<ItemType>* binarysearchtree<ItemType>::removeLeftmostNode(treenode<ItemType>*subTreePtr, ItemType& inorderSuccessor)
 {
-	if(subTreePtr->getLeftChildPtr() == NULL)
+	if(subTreePtr->getLeftPtr() == NULL)
 	{
 		inorderSuccessor = nodePtr(getItem);
 		return removeNode(nodePtr);
 	}
 	else
-		return removeLeftmostNode(nodePtr->getLeftChildPtr(), inorderSuccessor);
+		return removeLeftmostNode(nodePtr->getLeftPtr(), inorderSuccessor);
 }
 
-template<ItemType>
-treenode<ItemType>* binarysearchtree::findNode(treenode<ItemType>*treePtr, const ItemType &target) const
+/*
+	treenode<ItemType>* findNode(treenode<ItemType>*treePtr, const ItemType &target) const
+	Precondition: N/A
+	Postcondition: Searches for particular node based on the given data and then returns its address,
+	otherwise returns NULL if not found.
+*/
+template<class ItemType>
+treenode<ItemType>* binarysearchtree<ItemType>::findNode(treenode<ItemType>*treePtr, const ItemType &target) const
 {
 	if(treePtr == NULL)						//Not Found
 	{
@@ -366,11 +411,11 @@ treenode<ItemType>* binarysearchtree::findNode(treenode<ItemType>*treePtr, const
 	}
 	else if(treePtr->getItem() > target)
 	{
-		return findNode(treePtr->getLeftChildPtr(), target);
+		return findNode(treePtr->getLeftPtr(), target);
 	}
 	else
 	{
-		return findNode(treePtr->getRightChildPtr(), target);
+		return findNode(treePtr->getRightPtr(), target);
 	}
 }
 

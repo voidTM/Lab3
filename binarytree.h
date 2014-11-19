@@ -175,12 +175,14 @@ Postcondition: Finds the distance from the root to the most distant node.
 template<class ItemType>
 int binarytree<ItemType>::getHeight() const
 {
+	cout << "attempting to find height: at getHeight" << endl;
 	if (rootPtr != NULL)
 	{
 		return getHeightHelper(rootPtr);
 	}
 	else
 	{
+		cout << "root is null" << endl;
 		return 0;
 	}
 }
@@ -216,18 +218,18 @@ bool binarytree<ItemType>::add(ItemType newData)
 	treenode<ItemType> * newNodePtr = new treenode<ItemType>(newData);
 	treenode<ItemType>* currPtr = rootPtr;
 	treenode<ItemType>* movingPtr;
-	cout << "newPtr" << newNodePtr->getItem() << endl;
+//	cout << "newPtr" << newNodePtr->getItem() << endl;
 	if (rootPtr == NULL)
 	{
-		cout << "root was null" << endl;
+//		cout << "root was null" << endl;
 		rootPtr = newNodePtr;
-		cout << "rootPtr" << rootPtr->getItem() << endl;
+//		cout << "rootPtr" << rootPtr->getItem() << endl;
 	}
 	else
 	{
 		rootPtr = balancedAdd(rootPtr, newNodePtr);
-		cout << "rootPtr" << rootPtr->getItem() << endl;
-		cout << "testing" << endl;
+//		cout << "rootPtr" << rootPtr->getItem() << endl;
+//		cout << "testing" << endl;
 	}
 	return true;
 }
@@ -292,13 +294,13 @@ int binarytree<ItemType>::getHeightHelper(treenode < ItemType > *subTreePtr) con
 {
 	if (subTreePtr == NULL)
 	{
-//		cout << "ENdFound "<< endl;
+		cout << "ENdFound "<< endl;
 		return 0;
 	}
 	else
 	{
 		int  i = 1 + max(getHeightHelper(subTreePtr->getLeftPtr()), getHeightHelper(subTreePtr->getRightPtr()));
-//		cout << "end not found currently at" << i << endl;
+		cout << "end not found currently at" << i << endl;
 		return i;
 	}
 }
@@ -347,27 +349,6 @@ treenode < ItemType >* binarytree<ItemType>::balancedAdd(treenode<ItemType> *sub
 		return subTreePtr; //<-This is returning null atm
 	}
 }
-
-/*
-	
-*/
-template<class ItemType>
-treenode<ItemType>* binarytree<ItemType>::removeValue(treenode < ItemType > *subTreePtr, const ItemType target, bool & success)
-{
-	subTreePtr = findNode(subTreePtr, target, success);
-	if (success == true)
-	{
-		subTreePtr = moveValuesUpTree(subTreePtr);
-		success = true;
-		return subTreePtr;
-	}
-	else
-	{
-		success = false;
-		return NULL;
-	}
-}
-
 /*
 	treenode<ItemType>* moveValuesUpTree(treenode<ItemType>* subTreePtr)
 */
@@ -434,12 +415,6 @@ treenode<ItemType>* binarytree<ItemType>::findNode(treenode<ItemType> *treePtr, 
 		tempPtr = findNode(treePtr->getRightChildPtr(), target, success);
 		return treePtr;
 	}
-}
-
-template<class ItemType>
-void binarytree<ItemType>::postorder(void visit(ItemType &), treenode < ItemType > *treePtr) const
-{
-
 }
 
 #endif

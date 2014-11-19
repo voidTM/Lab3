@@ -44,5 +44,8 @@
     <ClInclude Include="writer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="binarysearchtree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@
 #include "birthday.h"
 #include "treenode.h"
 #include "binarytree.h"
+#include "binarysearchtree.h"
 #include "writer.h"
 
 using namespace std;
@@ -75,9 +76,11 @@ birthday birthdayParser(string aLine)
 int main()
 {
 	reader magic;
+	bool addSuccess;
 	vector<string> readIn;
 //	birthday temp;
-	binarytree <string> testTree;
+	binarysearchtree <string> testTree;
+//	binarytree <string> testnodeTree;
 	magic.addFile("Birthdays.txt");
 	magic.readFile();
 	readIn = magic.getData();
@@ -87,9 +90,12 @@ int main()
 	for (int i = 0; i < readIn.size(); i++)
 	{
 //		temp = birthdayParser(readIn.at(i));
-//		cout << "Name after: " << temp.getName();
-		testTree.add(readIn.at(i));
+		cout << "Name after: " << readIn.at(i) << endl;
+		addSuccess = testTree.add(readIn.at(i));
+//		testnodeTree.add(readIn.at(i));
+		cout << "Successful add? " << addSuccess << endl;
 		cout << " height is: " << testTree.getHeight() << endl;
+//		cout << "height of reg tree is " << testnodeTree.getHeight() << endl;
 	}
 
 	writer end;

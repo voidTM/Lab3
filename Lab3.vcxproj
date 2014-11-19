@@ -70,6 +70,7 @@
     <ClCompile Include="writer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="binarysearchtree.h" />
     <ClInclude Include="binarytree.h" />
     <ClInclude Include="birthday.h" />
     <ClInclude Include="reader.h" />
